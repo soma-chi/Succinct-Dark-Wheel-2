@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Succinct Stars: Gothic Casino</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=MedievalSharp&display=swap');
+        
+        :root {
+            --blood-red: #8b0000;
+            --dark-purple: #2a0a3a;
+            --bone-white: #f0e6d2;
+            --candle-glow: #ff9e00;
+            --shadow-black: #0a050f;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--shadow-black);
+            color: var(--bone-white);
+            font-family: 'Cinzel Decorative', cursive;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(139, 0, 0, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(139, 0, 0, 0.1) 0%, transparent 20%),
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M30,10 Q50,0 70,10 Q90,20 90,40 Q90,60 70,70 Q50,80 30,70 Q10,60 10,40 Q10,20 30,10 Z" fill="none" stroke="%238b0000" stroke-width="0.5"/></svg>');
+            background-size: 200px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin: 0;
+            color: var(--blood-red);
+            text-shadow: 0 0 10px var(--candle-glow), 0 0 20px var(--blood-red);
+            letter-spacing: 3px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        h1::before, h1::after {
+            content: "✧";
+            margin: 0 15px;
+            color: var(--candle-glow);
+        }
+        
+        .subtitle {
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1.2rem;
+            color: var(--bone-white);
+            margin-top: 10px;
+            font-style: italic;
+        }
+        
+        .player-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, rgba(42, 10, 58, 0.7), rgba(139, 0, 0, 0.5));
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid var(--blood-red);
+            box-shadow: 0 0 15px rgba(139, 0, 0, 0.5);
+        }
+        
+        .stars {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+        }
+        
+        .stars span {
+            color: var(--candle-glow);
+            margin-right: 5px;
+        }
+        
+        .title-display {
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1.3rem;
+            color: var(--candle-glow);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .slot-machine {
+            background: linear-gradient(to bottom, rgba(42, 10, 58, 0.8), rgba(10, 5, 15, 0.9));
+            border: 3px solid var(--blood-red);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(139, 0, 0, 0.7), inset 0 0 20px rgba(0, 0, 0, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .slot-machine::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(to right, transparent, var(--candle-glow), transparent);
+            box-shadow: 0 0 10px var(--candle-glow);
+            animation: candle-flicker 3s infinite alternate;
+        }
+        
+        @keyframes candle-flicker {
+            0%, 100% { opacity: 0.8; }
+            25% { opacity: 1; }
+            50% { opacity: 0.6; }
+            75% { opacity: 0.9; }
+        }
+        
+        .reels-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 30px 0;
+            perspective: 1000px;
+        }
+        
+        .reel {
+            width: 120px;
+            height: 180px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--blood-red);
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(139, 0, 0, 0.5), 0 0 10px rgba(139, 0, 0, 0.5);
+        }
+        
+        .reel-symbol {
+            width: 100%;
+            height: 180px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 60px;
+            position: absolute;
+            transform-style: preserve-3d;
+        }
+        
+        .spin-btn {
+            background: linear-gradient(to bottom, var(--dark-purple), var(--shadow-black));
+            color: var(--bone-white);
+            border: 2px solid var(--blood-red);
+            border-radius: 5px;
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            font-family: 'Cinzel Decorative', cursive;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+            transition: all 0.3s;
+            box-shadow: 0 0 15px rgba(139, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .spin-btn:hover {
+            background: linear-gradient(to bottom, var(--blood-red), var(--dark-purple));
+            box-shadow: 0 0 25px rgba(139, 0, 0, 0.8);
+            transform: translateY(-2px);
+        }
+        
+        .spin-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: linear-gradient(to bottom, #333, #111);
+        }
+        
+        .spin-btn::after {
+            content: "(Cost: 2 Stars)";
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            right: 0;
+            font-size: 0.8rem;
+            color: var(--candle-glow);
+        }
+        
+        .paytable {
+            margin-top: 40px;
+            background: rgba(10, 5, 15, 0.7);
+            border: 1px solid var(--blood-red);
+            border-radius: 5px;
+            padding: 15px;
+        }
+        
+        .paytable h3 {
+            margin-top: 0;
+            color: var(--candle-glow);
+            border-bottom: 1px solid var(--blood-red);
+            padding-bottom: 5px;
+        }
+        
+        .paytable ul {
+            list-style-type: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        
+        .paytable li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .paytable .symbol {
+            font-size: 1.5rem;
+        }
+        
+        .hierarchy {
+            margin-top: 40px;
+            background: rgba(10, 5, 15, 0.7);
+            border: 1px solid var(--blood-red);
+            border-radius: 5px;
+            padding: 15px;
+        }
+        
+        .hierarchy h3 {
+            margin-top: 0;
+            color: var(--candle-glow);
+            border-bottom: 1px solid var(--blood-red);
+            padding-bottom: 5px;
+        }
+        
+        .hierarchy ol {
+            padding-left: 20px;
+            columns: 2;
+        }
+        
+        .hierarchy li {
+            margin-bottom: 10px;
+            break-inside: avoid;
+        }
+        
+        .win-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(10, 5, 15, 0.9);
+            border: 3px solid var(--blood-red);
+            padding: 20px 40px;
+            border-radius: 10px;
+            z-index: 100;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(139, 0, 0, 0.8);
+            display: none;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 30px rgba(139, 0, 0, 0.8); }
+            50% { box-shadow: 0 0 50px rgba(255, 158, 0, 0.8); }
+            100% { box-shadow: 0 0 30px rgba(139, 0, 0, 0.8); }
+        }
+        
+        .win-message h2 {
+            color: var(--candle-glow);
+            margin-top: 0;
+        }
+        
+        .win-message .win-amount {
+            font-size: 2rem;
+            color: var(--candle-glow);
+            margin: 15px 0;
+        }
+        
+        .close-message {
+            background: var(--blood-red);
+            border: none;
+            color: var(--bone-white);
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Cinzel Decorative', cursive;
+        }
+        
+        .candles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .candle {
+            position: absolute;
+            width: 20px;
+            height: 50px;
+            background: linear-gradient(to right, #555, #333, #555);
+            border-radius: 3px;
+        }
+        
+        .candle::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 15px;
+            background: linear-gradient(to bottom, var(--candle-glow), #ff6600);
+            border-radius: 50% 50% 20% 20%;
+            filter: blur(3px);
+            animation: flicker 3s infinite alternate;
+        }
+        
+        @keyframes flicker {
+            0%, 100% { opacity: 1; height: 15px; }
+            25% { opacity: 0.8; height: 12px; }
+            50% { opacity: 0.9; height: 18px; }
+            75% { opacity: 0.7; height: 10px; }
+        }
+        
+        .flames {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .flame {
+            position: absolute;
+            background: radial-gradient(ellipse at center, rgba(255,200,100,0.8) 0%, rgba(255,100,0,0.4) 50%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(5px);
+            opacity: 0;
+        }
+        
+        .skull-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50,15 C60,15 65,25 65,35 C65,45 60,50 50,50 C40,50 35,45 35,35 C35,25 40,15 50,15 M20,60 C20,70 25,80 35,80 L65,80 C75,80 80,70 80,60 C80,50 75,45 65,45 L35,45 C25,45 20,50 20,60 M30,65 C30,62 32,60 35,60 C38,60 40,62 40,65 C40,68 38,70 35,70 C32,70 30,68 30,65 M60,65 C60,62 62,60 65,60 C68,60 70,62 70,65 C70,68 68,70 65,70 C62,70 60,68 60,65" fill="none" stroke="%238b0000" stroke-width="2"/></svg>');
+            background-size: 300px;
+            background-repeat: repeat;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 90;
+            animation: skullFade 3s forwards;
+            display: none;
+        }
+        
+        @keyframes skullFade {
+            0% { opacity: 0; }
+            20% { opacity: 0.3; }
+            100% { opacity: 0; }
+        }
+        
+        .blood-drip {
+            position: absolute;
+            width: 2px;
+            height: 0;
+            background: var(--blood-red);
+            top: 0;
+            animation: drip 2s forwards;
+            display: none;
+        }
+        
+        @keyframes drip {
+            0% { height: 0; opacity: 0; }
+            20% { opacity: 1; }
+            100% { height: 100px; opacity: 0; }
+        }
+        
+        .raven-effect {
+            position: fixed;
+            width: 100px;
+            height: 100px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M80,40 C70,30 60,20 50,20 C40,20 30,30 20,40 C10,50 10,60 20,70 C30,80 40,80 50,80 C60,80 70,80 80,70 C90,60 90,50 80,40 M40,50 C40,45 45,40 50,40 C55,40 60,45 60,50 C60,55 55,60 50,60 C45,60 40,55 40,50" fill="%230a050f" stroke="%238b0000" stroke-width="2"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            animation: ravenFly 3s forwards;
+            display: none;
+            z-index: 95;
+        }
+        
+        @keyframes ravenFly {
+            0% { transform: translateX(-150px) translateY(50px); opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: translateX(calc(100vw + 150px)) translateY(150px); opacity: 0; }
+        }
+        
+        audio {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .reel {
+                width: 80px;
+                height: 120px;
+            }
+            
+            .reel-symbol {
+                height: 120px;
+                font-size: 40px;
+            }
+            
+            .hierarchy ol {
+                columns: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="candles">
+        <div class="candle" style="top: 10%; left: 5%;"></div>
+        <div class="candle" style="top: 15%; right: 10%;"></div>
+        <div class="candle" style="bottom: 20%; left: 15%;"></div>
+        <div class="candle" style="bottom: 10%; right: 5%;"></div>
+    </div>
+    
+    <div class="flames" id="flames-container"></div>
+    <div class="skull-effect" id="skull-effect"></div>
+    <div class="raven-effect" id="raven-effect"></div>
+    
+    <div class="container">
+        <header>
+            <h1>SUCCINCT STARS</h1>
+            <div class="subtitle">Wager Your Stars... If You Dare</div>
+        </header>
+        
+        <div class="player-info">
+            <div class="stars">
+                <span>✧</span> <span id="star-count">100</span>
+            </div>
+            <div class="title-display" id="player-title">Succinct Rookie</div>
+        </div>
+        
+        <div class="slot-machine">
+            <div class="reels-container" id="reels-container">
+                <div class="reel" id="reel1">
+                    <div class="reel-symbol" data-symbol="skull">💀</div>
+                    <div class="reel-symbol" data-symbol="raven">🦇</div>
+                    <div class="reel-symbol" data-symbol="moon">🌕</div>
+                    <div class="reel-symbol" data-symbol="candle">🕯️</div>
+                    <div class="reel-symbol" data-symbol="book">📖</div>
+                </div>
+                <div class="reel" id="reel2">
+                    <div class="reel-symbol" data-symbol="skull">💀</div>
+                    <div class="reel-symbol" data-symbol="raven">🦇</div>
+                    <div class="reel-symbol" data-symbol="moon">🌕</div>
+                    <div class="reel-symbol" data-symbol="candle">🕯️</div>
+                    <div class="reel-symbol" data-symbol="book">📖</div>
+                </div>
+                <div class="reel" id="reel3">
+                    <div class="reel-symbol" data-symbol="skull">💀</div>
+                    <div class="reel-symbol" data-symbol="raven">🦇</div>
+                    <div class="reel-symbol" data-symbol="moon">🌕</div>
+                    <div class="reel-symbol" data-symbol="candle">🕯️</div>
+                    <div class="reel-symbol" data-symbol="book">📖</div>
+                </div>
+            </div>
+            
+            <button class="spin-btn" id="spin-btn">SPIN THE DARK WHEEL</button>
+        </div>
+        
+        <div class="paytable">
+            <h3>OMENS & PAYOUTS</h3>
+            <ul>
+                <li><span class="symbol">💀💀💀</span> Triple Skulls - 200x</li>
+                <li><span class="symbol">🦇🦇🦇</span> Triple Ravens - 100x</li>
+                <li><span class="symbol">🌕🌕🌕</span> Triple Moons - 20x</li>
+                <li><span class="symbol">🕯️🕯️🕯️</span> Triple Candles - 15x</li>
+                <li><span class="symbol">📖📖📖</span> Triple Books - 10x</li>
+            </ul>
+            <p style="color: var(--candle-glow); font-style: italic; margin-top: 10px;">
+                Only triple matches win! All other combinations lose.
+            </p>
+        </div>
+        
+        <div class="hierarchy">
+            <h3>THE DARK HIERARCHY</h3>
+            <ol>
+                <li>Succinct Rookie (The Fledgling)</li>
+                <li>Succinct Veteran (The Blooded)</li>
+                <li>Succinct Elite (The Shadowed)</li>
+                <li>Succinct Pro (The Cunning)</li>
+                <li>Succinct Master (The Undying)</li>
+                <li>Succinct Overlord (The Nightmare)</li>
+                <li>Succinct Conqueror (The Eternal)</li>
+            </ol>
+        </div>
+    </div>
+    
+    <div class="win-message" id="win-message">
+        <h2 id="win-title">DARK FORTUNE SMILES UPON YOU!</h2>
+        <div class="win-amount" id="win-amount">+50 Stars</div>
+        <button class="close-message" id="close-message">CLAIM YOUR BOUNTY</button>
+    </div>
+    
+    <!-- Audio Elements -->
+    <audio id="ambient-sound" loop>
+        <source src="sounds/ambient.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="spin-sound">
+        <source src="sounds/spin.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="win-small-sound">
+        <source src="sounds/win-small.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="win-medium-sound">
+        <source src="sounds/win-medium.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="win-large-sound">
+        <source src="sounds/win-large.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="lose-sound">
+        <source src="sounds/lose.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="rank-up-sound">
+        <source src="sounds/rank-up.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="triple-skull-sound">
+        <source src="sounds/triple-skull.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="triple-raven-sound">
+        <source src="sounds/triple-raven.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Game state
+            const state = {
+                stars: 100,
+                currentTitle: 0,
+                titles: [
+                    "Succinct Rookie (The Fledgling)",
+                    "Succinct Veteran (The Blooded)",
+                    "Succinct Elite (The Shadowed)",
+                    "Succinct Pro (The Cunning)",
+                    "Succinct Master (The Undying)",
+                    "Succinct Overlord (The Nightmare)",
+                    "Succinct Conqueror (The Eternal)"
+                ],
+                symbols: [
+                    { emoji: "💀", name: "skull", value: 50 },
+                    { emoji: "🦇", name: "raven", value: 30 },
+                    { emoji: "🌕", name: "moon", value: 20 },
+                    { emoji: "🕯️", name: "candle", value: 15 },
+                    { emoji: "📖", name: "book", value: 10 }
+                ],
+                spinning: false,
+                spinsCompleted: 0
+            };
+            
+            // DOM elements
+            const starCountEl = document.getElementById('star-count');
+            const playerTitleEl = document.getElementById('player-title');
+            const spinBtn = document.getElementById('spin-btn');
+            const reels = [
+                document.getElementById('reel1'),
+                document.getElementById('reel2'),
+                document.getElementById('reel3')
+            ];
+            const winMessage = document.getElementById('win-message');
+            const winAmount = document.getElementById('win-amount');
+            const winTitle = document.getElementById('win-title');
+            const closeMessage = document.getElementById('close-message');
+            const flamesContainer = document.getElementById('flames-container');
+            const skullEffect = document.getElementById('skull-effect');
+            const ravenEffect = document.getElementById('raven-effect');
+            
+            // Initialize game
+            updateUI();
+            
+            // Start ambient sound (with user interaction)
+            document.body.addEventListener('click', function initSound() {
+                playSound('ambient');
+                document.body.removeEventListener('click', initSound);
+            }, { once: true });
+
+            // Adjust ambient volume
+            const ambientSound = document.getElementById('ambient-sound');
+            ambientSound.volume = 0.3; // 30% volume for background
+            
+            // Event listeners
+            spinBtn.addEventListener('click', spin);
+            closeMessage.addEventListener('click', function() {
+                winMessage.style.display = 'none';
+            });
+            
+            // Game functions
+            function spin() {
+                if (state.spinning || state.stars < 2) return;
+                
+                // Play spin sound
+                playSound('spin');
+                
+                // Deduct stars
+                state.stars -= 2;
+                state.spinsCompleted++;
+                updateUI();
+                
+                // Disable spin button during spin
+                state.spinning = true;
+                spinBtn.disabled = true;
+                
+                // Spin each reel with different durations for more realistic effect
+                const spinDurations = [2000, 2200, 2400];
+                const spinPromises = reels.map((reel, index) => {
+                    return spinReel(reel, spinDurations[index]);
+                });
+                
+                // When all reels stop spinning
+                Promise.all(spinPromises).then(results => {
+                    state.spinning = false;
+                    spinBtn.disabled = false;
+                    
+                    // Check for wins (only when all three match)
+                    const win = checkWin(results);
+                    if (win.amount > 0) {
+                        showWin(win.amount, win.symbol);
+                        state.stars += win.amount;
+                        
+                        // Check for title upgrade every 3 wins
+                        if (state.spinsCompleted % 3 === 0 && state.currentTitle < state.titles.length - 1) {
+                            state.currentTitle++;
+                            showTitleUpgrade();
+                        }
+                    } else {
+                        // Show loss message
+                        winTitle.textContent = "DARK FORTUNE FROWNS UPON YOU";
+                        winAmount.textContent = "NO MATCH!";
+                        winMessage.style.display = 'block';
+                        playSound('lose');
+                    }
+                    
+                    updateUI();
+                });
+            }
+            
+            function spinReel(reel, duration) {
+                return new Promise(resolve => {
+                    const symbols = reel.querySelectorAll('.reel-symbol');
+                    const startTime = Date.now();
+                    
+                    // Randomly select a stopping position
+                    const stopPosition = Math.floor(Math.random() * symbols.length);
+                    
+                    // Create blood drip effect
+                    createBloodDrip(reel);
+                    
+                    function animate() {
+                        const elapsed = Date.now() - startTime;
+                        const progress = elapsed / duration;
+                        
+                        if (progress >= 1) {
+                            // Final position
+                            symbols.forEach((symbol, index) => {
+                                symbol.style.transform = `translateY(${(index - stopPosition) * 100}%)`;
+                            });
+                            
+                            // Resolve with the stopped symbol
+                            const stoppedSymbol = symbols[stopPosition].getAttribute('data-symbol');
+                            resolve(stoppedSymbol);
+                            return;
+                        }
+                        
+                        // Ease-out function for slowing down
+                        const easedProgress = 1 - Math.pow(1 - progress, 3);
+                        
+                        // Calculate position with some overshooting for bounce effect
+                        let position;
+                        if (progress < 0.8) {
+                            // Fast spin at beginning
+                            position = -easedProgress * 100;
+                        } else {
+                            // Slow down at end
+                            position = -stopPosition * 100 + (1 - easedProgress) * 20 * Math.sin(progress * 20);
+                        }
+                        
+                        // Apply position to symbols
+                        symbols.forEach((symbol, index) => {
+                            symbol.style.transform = `translateY(${position + index * 100}%)`;
+                        });
+                        
+                        requestAnimationFrame(animate);
+                    }
+                    
+                    animate();
+                });
+            }
+            
+            function checkWin(symbols) {
+                // Only win if all three symbols match
+                if (symbols[0] === symbols[1] && symbols[1] === symbols[2]) {
+                    const symbol = state.symbols.find(s => s.name === symbols[0]);
+                    let multiplier = 1;
+                    
+                    // Extra multiplier for skulls and ravens
+                    if (symbols[0] === 'skull') {
+                        multiplier = 4; // 200x total (50x * 4)
+                        showSkullEffect();
+                        playSound('tripleSkull');
+                    } else if (symbols[0] === 'raven') {
+                        multiplier = 3.33; // ~100x total (30x * 3.33)
+                        showRavenEffect();
+                        playSound('tripleRaven');
+                    }
+                    
+                    return {
+                        amount: symbol.value * multiplier,
+                        symbol: symbol.name
+                    };
+                }
+                
+                // No win if not all three match
+                return { amount: 0, symbol: null };
+            }
+            
+            function showWin(amount, symbol) {
+                winTitle.textContent = `TRIPLE ${symbol.toUpperCase()}!`;
+                winAmount.textContent = `+${amount} Stars`;
+                winMessage.style.display = 'block';
+                
+                // Create flame effects based on win amount
+                createFlames(Math.min(10, Math.floor(amount / 10)));
+                
+                // Play sound effect based on win size
+                if (amount >= 100) {
+                    playSound('largeWin');
+                } else if (amount >= 50) {
+                    playSound('mediumWin');
+                } else {
+                    playSound('smallWin');
+                }
+            }
+            
+            function showTitleUpgrade() {
+                // Play rank up sound
+                playSound('titleUpgrade');
+                
+                // Create a more dramatic effect for title upgrades
+                for (let i = 0; i < 20; i++) {
+                    setTimeout(() => {
+                        createFlames(2);
+                    }, i * 100);
+                }
+                
+                // Show temporary message
+                setTimeout(() => {
+                    winTitle.textContent = "ASCENSION!";
+                    winAmount.textContent = `NEW TITLE: ${state.titles[state.currentTitle]}`;
+                    winMessage.style.display = 'block';
+                }, 1000);
+            }
+            
+            function createFlames(count) {
+                for (let i = 0; i < count; i++) {
+                    const flame = document.createElement('div');
+                    flame.className = 'flame';
+                    
+                    // Random position
+                    const x = Math.random() * 100;
+                    const y = Math.random() * 100;
+                    const size = 50 + Math.random() * 100;
+                    
+                    flame.style.left = `${x}%`;
+                    flame.style.top = `${y}%`;
+                    flame.style.width = `${size}px`;
+                    flame.style.height = `${size}px`;
+                    
+                    flamesContainer.appendChild(flame);
+                    
+                    // Fade out and remove
+                    setTimeout(() => {
+                        flame.style.opacity = '0';
+                        setTimeout(() => {
+                            flame.remove();
+                        }, 1000);
+                    }, 100);
+                }
+            }
+            
+            function createBloodDrip(reel) {
+                const drip = document.createElement('div');
+                drip.className = 'blood-drip';
+                
+                // Position near the reel
+                const reelRect = reel.getBoundingClientRect();
+                const x = reelRect.left + reelRect.width / 2 + (Math.random() * 20 - 10);
+                
+                drip.style.left = `${x}px`;
+                document.body.appendChild(drip);
+                
+                setTimeout(() => {
+                    drip.remove();
+                }, 2000);
+            }
+            
+            function showSkullEffect() {
+                skullEffect.style.display = 'block';
+                setTimeout(() => {
+                    skullEffect.style.display = 'none';
+                }, 3000);
+            }
+            
+            function showRavenEffect() {
+                ravenEffect.style.display = 'block';
+                setTimeout(() => {
+                    ravenEffect.style.display = 'none';
+                }, 3000);
+            }
+            
+            function playSound(type) {
+                try {
+                    const sounds = {
+                        ambient: document.getElementById('ambient-sound'),
+                        spin: document.getElementById('spin-sound'),
+                        smallWin: document.getElementById('win-small-sound'),
+                        mediumWin: document.getElementById('win-medium-sound'),
+                        largeWin: document.getElementById('win-large-sound'),
+                        lose: document.getElementById('lose-sound'),
+                        titleUpgrade: document.getElementById('rank-up-sound'),
+                        tripleSkull: document.getElementById('triple-skull-sound'),
+                        tripleRaven: document.getElementById('triple-raven-sound')
+                    };
+
+                    // Special cases first
+                    if (type === 'tripleSkull') {
+                        sounds.tripleSkull.currentTime = 0;
+                        return sounds.tripleSkull.play();
+                    }
+                    if (type === 'tripleRaven') {
+                        sounds.tripleRaven.currentTime = 0;
+                        return sounds.tripleRaven.play();
+                    }
+
+                    // Normal cases
+                    const sound = sounds[type];
+                    if (sound) {
+                        sound.currentTime = 0; // Rewind to start if already playing
+                        sound.play();
+                    }
+                } catch (e) {
+                    console.error("Error playing sound:", e);
+                }
+            }
+            
+            function updateUI() {
+                starCountEl.textContent = state.stars;
+                playerTitleEl.textContent = state.titles[state.currentTitle];
+                
+                // Disable spin button if not enough stars
+                spinBtn.disabled = state.stars < 2 || state.spinning;
+            }
+        });
+    </script>
+</body>
+</html>
